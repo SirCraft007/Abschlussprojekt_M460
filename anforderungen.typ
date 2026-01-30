@@ -16,9 +16,11 @@ Eine HTMX APP für meine #link("https://api.sercraft.ch")[Noten API]. Mit Hilfe 
 #table(
   columns: 2,
   [*Datum*], [*Arbeit (bis zu diesem Termin abgeschlossen)*],
-  [*Di, 27.01.2026*],
-  [Einlesen M460-8050\ API-Doku studieren\ Projektziel klar abgrenzen (Wrapper, kein Core-Backend)\ Flask-Projekt aufsetzen],
-  [*Fr, 30.01.2026*], [API-Doku studieren\ Projectziehl konkretisieren],
+  table.cell(fill: orange)[*Di, 27.01.2026*],
+  table.cell(
+    fill: orange,
+  )[Einlesen M460-8050\ API-Doku studieren\ Projektziel klar abgrenzen (Wrapper, kein Core-Backend)\ Flask-Projekt aufsetzen],
+  table.cell(fill: orange)[*Fr, 30.01.2026*], table.cell(fill: orange)[API-Doku studieren\ Projectziehl konkretisieren],
   table.cell(fill: green)[*Sportferien*], table.cell(fill: green)[—],
   [*Di, 17.02.2026*], [Erste Verbindungstest\ Erste UI],
   [*Fr, 20.02.2026*], [Login Flow],
@@ -28,3 +30,6 @@ Eine HTMX APP für meine #link("https://api.sercraft.ch")[Noten API]. Mit Hilfe 
   [*Fr, 06.03.2026*], [Testing\ Doku (Architektur, Bewertungskriterien)\ *Abgabe 22:00*],
 )
 
+#highlight(
+  fill: orange,
+)[Krankheit]
