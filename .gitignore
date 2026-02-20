@@ -1,1 +1,22 @@
 *.pdf
+
+# Python
+__pycache__
+.venv
+.env
+
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+
+.vercel
+
+.vscode
+.env*.local
+
+
+*.log

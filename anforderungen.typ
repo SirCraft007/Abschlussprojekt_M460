@@ -3,7 +3,7 @@
 == Kurzbeschreibung
 #show link: underline
 
-Eine HTMX APP für meine #link("https://api.sercraft.ch")[Noten API]. Mit Hilfe einer Chrome Extension können User ihre Noten in die API hochladen. In der CRUD-App können sie die Daten bearbeiten.
+Eine HTMX APP für meine #link("https://api.sercraft.ch")[Noten API]. Mit Hilfe einer Chrome Extension können User ihre Noten in die API hochladen. In der CRUD-App können sie die Daten bearbeiten. Eine Seperate #link("https://github.com/SirCraft007/schulnetz-plus")[Chrome Extension] für das Importieren von Noten aus dem JSON-Export von Schulnetz.
 
 == Bewertungskriterien
 
@@ -33,3 +33,9 @@ Eine HTMX APP für meine #link("https://api.sercraft.ch")[Noten API]. Mit Hilfe 
 #highlight(
   fill: orange,
 )[Krankheit]
+
+
+=== 19.02.2026
+
+Erste Verbindung mit der API. Ich habe konkret gelernt, dass ich die API-Dokumentation nicht sehr gut gestaltet haben, da ich nicht einmal angebe, dass ich alle Daten als JSON will.
+Python mässig habe ich herausgefunden das man mehrere  ```Python except Exception``` blöcke haben kann.
