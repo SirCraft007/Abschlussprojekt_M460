@@ -34,6 +34,7 @@ Eine HTMX APP für meine #link("https://api.sercraft.ch")[Noten API]. Mit Hilfe 
   fill: orange,
 )[Krankheit]
 
+Genaue codechanges auf #link("https://github.com/SirCraft007/NotenAPI_frontend")[Github]
 
 === 19.02.2026
 
