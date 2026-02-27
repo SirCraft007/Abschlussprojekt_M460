@@ -27,6 +27,21 @@ def index():
             response_json = response.json()
             username = response_json["user"]["username"]
             session["username"] = username
+            response = requests.get(api_url + "/user", headers=headers)
+            if response.status_code == 200:
+                response_json = response.json()
+                print(response_json)
+                total_average = response_json["user"]["total_average"]
+                total_exams = response_json["user"]["total_exams"]
+                total_points = response_json["user"]["total_points"]
+                print(total_average, total_exams, total_points)
+                return render_template(
+                    "loggedin.html",
+                    username=username,
+                    total_avrage=total_average,
+                    total_exams=total_exams,
+                    total_points=total_points,
+                )
             return render_template("loggedin.html", username=username)
 
         else:
