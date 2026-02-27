@@ -20,6 +20,11 @@
   <button type="submit">Login</button>
 </form>
 <div>
-  <p>{% if error %}{{ error }}{% endif %}</p>
+  <p class="{% if error %}error{% endif %}">{% if message %}{{ message }}{% endif %}</p>
 </div>
+<style>
+  .error {
+    color: red;
+  }
+</style>
 {% endblock content %}

@@ -1,20 +1,46 @@
-from flask import Flask, redirect, render_template, request, url_for
+import os
+
+from flask import Flask, redirect, render_template, request, url_for, session
 import requests
 
 
 app = Flask(__name__)
 
-dev = False
-api_url = "http://localhost:3001" if dev else "https://api.sercraft.ch"
+dev_url = False
+api_url = "http://localhost:3001" if dev_url else "https://api.sercraft.ch"
+dev = True
+app.config["SESSION_COOKIE_SECURE"] = not dev
+app.config["SESSION_COOKIE_HTTPONLY"] = not dev
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.secret_key = "jakljlkfjklfhfajljhoaifpoafjhioh" if dev else os.urandom(24)
 
 
 @app.get("/")
-def home():
-    return render_template("index.html")
+def index():
+    token = session.get("access_token")
+    print(token)
+    if token is not None:
+        headers = {"x-access-token": f"{token}"}
+        print(headers)
+        response = requests.get(api_url + "/user", headers=headers)
+        if response.status_code == 200:
+            response_json = response.json()
+            username = response_json["user"]["username"]
+            session["username"] = username
+            return render_template("loggedin.html", username=username)
+
+        else:
+            return render_template("index.html", error="Error")
+
+    else:
+        return render_template("index.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    token = session.get("access_token")
+    if token is not None:
+        return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -23,28 +49,65 @@ def login():
                 api_url + "/login",
                 json={"username": username, "password": password},
             )
-            error_message = response.json().get("message", response.text)
+            response_json = response.json()
+            if response_json["success"]:
+                session["access_token"] = response_json["token"]
+                return redirect(url_for("index"))
+            else:
+                error_message = response_json["message"]
+
             return render_template(
-                "login.html", error=error_message, password=password, username=username
+                "login.html",
+                message=error_message,
+                password=password,
+                username=username,
+                error=True,
             )
 
         except requests.exceptions.ConnectionError:
             return render_template(
                 "login.html",
-                error="Kein verbundg mit der API",
+                message="Kein verbundg mit der API",
                 password=password,
                 username=username,
+                error=True,
             )
         except Exception as e:
             print(type(e))
             print(e)
             return render_template(
-                "login.html", error=e, password=password, username=username
+                "login.html",
+                message=e,
+                password=password,
+                username=username,
+                error=True,
             )
     else:
         return render_template(
             "login.html",
+            error=False,
         )
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    token = session.get("access_token")
+    if token is not None:
+        return redirect(url_for("index"))
+    if request.method == "POST":
+        pass
+    return render_template("register.html")
+
+
+@app.route("/protected")
+def protected():
+    current_user = session.get("username")
+    return f"Hello {current_user}"
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 
 def hello():
@@ -52,4 +115,4 @@ def hello():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5001)
+    app.run(debug=True)
