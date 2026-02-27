@@ -94,14 +94,44 @@ def register():
     if token is not None:
         return redirect(url_for("index"))
     if request.method == "POST":
-        pass
-    return render_template("register.html")
+        username = request.form["username"]
+        password = request.form["password"]
 
+        if not username or not password:
+            return render_template(
+                "register.html",
+                error=True,
+                message="Bitte geben Sie einen Benutzernamen und ein Passwort ein.",
+            )
+        try:
+            response = requests.post(
+                url=api_url + "/register",
+                json={"username": username, "password": password},
+            )
+            response_json = response.json()
+            print(response_json)
+            if response_json["success"]:
+                session["access_token"] = response_json["token"]
+                return redirect(url_for("index"))
+            else:
+                return render_template(
+                    "register.html",
+                    error=True,
+                    message=response_json["message"],
+                    username=username,
+                    password=password,
+                )
 
-@app.route("/protected")
-def protected():
-    current_user = session.get("username")
-    return f"Hello {current_user}"
+        except Exception as e:
+            print(e)
+            return render_template(
+                "register.html",
+                error=True,
+                message=e,
+                username=username,
+                password=password,
+            )
+    return render_template("register.html", error=False)
 
 
 @app.route("/logout")
@@ -109,6 +139,19 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+@app.route("/delete")
+def delete():
+    token = session.get("access_token")
+    if token is not None:
+        headers = {"x-access-token": f"{token}"}
+        response = requests.delete(api_url + "/user", headers=headers)
+        if response.status_code == 200:
+            session.clear()
+            return redirect(url_for("index"))
+        else:
+            return render_template("index.html", error="Error")
+    else:
+        return redirect(url_for("login"))
 
 def hello():
     return "Hello World!"

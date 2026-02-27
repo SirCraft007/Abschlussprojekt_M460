@@ -40,3 +40,8 @@ Genaue codechanges auf #link("https://github.com/SirCraft007/NotenAPI_frontend")
 
 Erste Verbindung mit der API. Ich habe konkret gelernt, dass ich die API-Dokumentation nicht sehr gut gestaltet haben, da ich nicht einmal angebe, dass ich alle Daten als JSON will.
 Python mässig habe ich herausgefunden das man mehrere  ```Python except Exception``` blöcke haben kann.
+
+=== 26.02.2026
+
+Herausgefunden, dass die lokale api und die in der cloud dnicht mit der Gleichen DB sperchen weshalb ich nicht die Die änderung in der cloud sehen konnte.
+Auch können sich jetzt neue Benutzer anmelden und wieder sich selbst löschen.

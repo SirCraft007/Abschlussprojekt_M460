@@ -2,8 +2,13 @@
 <h1>Hallo {{ username }}!</h1>
 
 
-{% if username %}
 <p>You are logged in as {{ username }}.</p>
-{% endif %}
-<a href="/logout">Login</a>
+
+
+
+<a href="/logout">Logout</a>
+
+
+<a href="/delete" onclick="return confirm('Bist du sicher das du deinen Account löschen willst?')">Löschen</a>
+
 {% endblock content %}
