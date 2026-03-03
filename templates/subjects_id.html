@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ subject.name }}</h1>
+
+<div>
+    <h3>Subject Details</h3>
+    <table>
+        <tr>
+            <th>Name</th>
+            <td>{{ subject.name }}</td>
+        </tr>
+        <tr>
+            <th>Average</th>
+            <td>{{ subject.average }}</td>
+        </tr>
+        <tr>
+            <th>Number of Exams</th>
+            <td>{{ subject.num_exams }}</td>
+        </tr>
+        <tr>
+            <th>Plus Points</th>
+            <td>{{ subject.plus_points }}</td>
+        </tr>
+    </table>
+</div>
+
+<h2>Exams</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Details</th>
+            <th>Grade</th>
+            <th>Weight</th>
+            <th>ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exam in exams %}
+        <tr>
+            <td>{{ exam.date }}</td>
+            <td>{{ exam.details }}</td>
+            <td>{{ exam.grade }}</td>
+            <td>{{ exam.weight }}</td>
+            <td>{{ exam.id }}</td>
+            <td style="display:none;">
+                <input type="hidden" value="{{ exam.id }}">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}
