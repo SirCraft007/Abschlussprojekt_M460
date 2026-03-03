@@ -2,7 +2,7 @@
 {% block title %}Anmeldung{% endblock title %}
 {% block content %}
 <h1>Anmeldung</h1>
-<form action="/login" method="post">
+<form action="{{ url_for('login') }}" method="post">
   <label for="username">Benutzername:</label>
   <input
     type="text"
@@ -21,7 +21,6 @@
   />
   <button type="submit">Anmelden</button>
 </form>
-<a href="/register">Registrieren</a>
 <div>
   <p class="{% if error %}error{% endif %}">{% if message %}{{ message }}{% endif %}</p>
 </div>

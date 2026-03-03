@@ -9,11 +9,7 @@
 <p>Gesamtdurchschnitt: {{ total_avrage }}</p>
 <p>Anzahl Prüfungen: {{ total_exams }}</p>
 <p>Gesamtpunkte: {{ total_points }}</p>
-<a href="/subjects">Fächer</a>
-
-<a href="/logout">Abmelden</a>
-
-
-<a href="/delete" onclick="return confirm('Bist du sicher das du deinen Account löschen willst?')">Account löschen</a>
+<a href="{{ url_for('delete') }}"
+    onclick="return confirm('Bist du sicher das du deinen Account löschen willst?')">Account löschen</a>
 
 {% endblock content %}
