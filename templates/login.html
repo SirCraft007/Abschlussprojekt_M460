@@ -1,7 +1,9 @@
-{% extends "base.html" %} {% block content %}
-<h1>Login</h1>
+{% extends "base.html" %}
+{% block title %}Anmeldung{% endblock title %}
+{% block content %}
+<h1>Anmeldung</h1>
 <form action="/login" method="post">
-  <label for="username">Username:</label>
+  <label for="username">Benutzername:</label>
   <input
     type="text"
     id="username"
@@ -9,7 +11,7 @@
     required
     value="{% if username %}{{ username }}{% endif %}"
   />
-  <label for="password">Password:</label>
+  <label for="password">Passwort:</label>
   <input
     type="password"
     id="password"
@@ -17,9 +19,9 @@
     required
     value="{% if password %}{{ password }}{% endif %}"
   />
-  <button type="submit">Login</button>
+  <button type="submit">Anmelden</button>
 </form>
-<a href="/register">Register</a>
+<a href="/register">Registrieren</a>
 <div>
   <p class="{% if error %}error{% endif %}">{% if message %}{{ message }}{% endif %}</p>
 </div>

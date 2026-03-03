@@ -1,13 +1,26 @@
 {% extends "base.html" %}
+{% block title %}Fächer{% endblock title %}
 {% block content %}
-<h1>Subjects</h1>
+<h1>Fächer</h1>
 
-{% for subject in subjects %}
-<div>
-    <h2><a href="/subjects/{{ subject.id }}">{{ subject.name }}</a></h2>
-    <p>Average: {{ subject.average }}</p>
-    <p>Number of Exams: {{ subject.num_exams }}</p>
-    <p>Points: {{ subject.points }}</p>
-</div>
-{% endfor %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Durchschnitt</th>
+            <th>Anzahl Prüfungen</th>
+            <th>Punkte</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject in subjects %}
+        <tr>
+            <td><a href="/subjects/{{ subject.id }}">{{ subject.name }}</a></td>
+            <td>{{ subject.average }}</td>
+            <td>{{ subject.num_exams }}</td>
+            <td>{{ subject.points }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
 {% endblock content %}

@@ -1,11 +1,13 @@
-{% extends "base.html" %} {% block content %}
-<h1>Register</h1>
+{% extends "base.html" %}
+{% block title %}Registrierung{% endblock title %}
+{% block content %}
+<h1>Registrierung</h1>
 <form action="/register" method="post">
-    <label for="username">Username:</label>
+    <label for="username">Benutzername:</label>
     <input type="text" id="username" name="username" required value="{% if username %}{{ username }}{% endif %}" />
-    <label for="password">Password:</label>
+    <label for="password">Passwort:</label>
     <input type="password" id="password" name="password" required value="{% if password %}{{ password }}{% endif %}" />
-    <button type="submit">Register</button>
+    <button type="submit">Registrieren</button>
 </form>
 <div>
     <p class="{% if error %}error{% endif %}">{% if message %}{{ message }}{% endif %}</p>

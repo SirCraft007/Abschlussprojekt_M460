@@ -1,37 +1,38 @@
 {% extends "base.html" %}
+{% block title %}{{ subject.name }}{% endblock title %}
 {% block content %}
 <h1>{{ subject.name }}</h1>
 
 <div>
-    <h3>Subject Details</h3>
+    <h3>Fachdetails</h3>
     <table>
         <tr>
-            <th>Name</th>
+            <th>Bezeichnung</th>
             <td>{{ subject.name }}</td>
         </tr>
         <tr>
-            <th>Average</th>
+            <th>Durchschnitt</th>
             <td>{{ subject.average }}</td>
         </tr>
         <tr>
-            <th>Number of Exams</th>
+            <th>Anzahl Prüfungen</th>
             <td>{{ subject.num_exams }}</td>
         </tr>
         <tr>
-            <th>Plus Points</th>
+            <th>Pluspunkte</th>
             <td>{{ subject.plus_points }}</td>
         </tr>
     </table>
 </div>
 
-<h2>Exams</h2>
+<h2>Prüfungen</h2>
 <table>
     <thead>
         <tr>
-            <th>Date</th>
+            <th>Datum</th>
             <th>Details</th>
-            <th>Grade</th>
-            <th>Weight</th>
+            <th>Note</th>
+            <th>Gewichtung</th>
             <th>ID</th>
         </tr>
     </thead>
