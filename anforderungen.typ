@@ -45,3 +45,12 @@ Python mässig habe ich herausgefunden das man mehrere  ```Python except Excepti
 
 Herausgefunden, dass die lokale api und die in der cloud dnicht mit der Gleichen DB sperchen weshalb ich nicht die Die änderung in der cloud sehen konnte.
 Auch können sich jetzt neue Benutzer anmelden und wieder sich selbst löschen.
+
+
+=== 02.03.2026
+
+Erste Verbindung mit der API. Erste UI.
+
+=== 06.03.2026
+
+Volle UI mit testung. Für eine schönwe ui wurde KI verwendet. Die UI ist jetzt so gut wie eine echte UI.

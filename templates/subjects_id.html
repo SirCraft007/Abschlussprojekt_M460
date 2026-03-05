@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body text-center p-4">
@@ -40,7 +40,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body text-center p-4">
@@ -50,7 +50,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body text-center p-4">
@@ -94,7 +94,8 @@
                         <td><span class="text-muted">{{ exam.details or '—' }}</span></td>
                         <td>
                             {% if exam.grade is not none %}
-                            <span class="badge bg-{{ 'success' if exam.grade >= 5 else 'warning' if exam.grade >= 4 else 'danger' }} fs-6">
+                            <span
+                                class="badge bg-{{ 'success' if exam.grade >= 5 else 'warning' if exam.grade >= 4 else 'danger' }} fs-6">
                                 {{ exam.grade }}
                             </span>
                             {% else %}
@@ -103,14 +104,14 @@
                         </td>
                         <td><span class="badge bg-secondary">{{ exam.weight }}</span></td>
                         <td class="text-end pe-4">
-                            <a href="/grades/{{ subject.id }}/edit/{{ exam.id }}" 
-                               class="btn btn-sm btn-outline-primary me-2" title="Bearbeiten">
+                            <a href="/grades/{{ subject.id }}/edit/{{ exam.id }}"
+                                class="btn btn-sm btn-outline-primary me-2" title="Bearbeiten">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="/grades/{{ subject.id }}/delete/{{ exam.id }}" 
-                               class="btn btn-sm btn-outline-danger"
-                               onclick="return confirm('Bist du sicher das du die Prüfung löschen willst?')" 
-                               title="Löschen">
+                            <a href="/grades/{{ subject.id }}/delete/{{ exam.id }}"
+                                class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Bist du sicher das du die Prüfung löschen willst?')"
+                                title="Löschen">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>

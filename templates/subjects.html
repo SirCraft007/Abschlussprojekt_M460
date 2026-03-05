@@ -29,15 +29,16 @@
                     {% for subject in subjects %}
                     <tr>
                         <td class="ps-4">
-                            <a href="{{ url_for('subject', subject_id=subject.id) }}" 
-                               class="text-decoration-none fw-semibold text-primary">
+                            <a href="{{ url_for('subject', subject_id=subject.id) }}"
+                                class="text-decoration-none fw-semibold text-primary">
                                 <i class="bi bi-folder2-open me-2"></i>{{ subject.name }}
                             </a>
                         </td>
                         <td><span class="badge bg-secondary">{{ subject.weight }}</span></td>
                         <td>
                             {% if subject.average is not none %}
-                            <span class="badge bg-{{ 'success' if subject.average >= 5 else 'warning' if subject.average >= 4 else 'danger' }} fs-6">
+                            <span
+                                class="badge bg-{{ 'success' if subject.average >= 5 else 'warning' if subject.average >= 4 else 'danger' }} fs-6">
                                 {{ subject.average }}
                             </span>
                             {% else %}
@@ -47,12 +48,12 @@
                         <td><span class="text-muted">{{ subject.num_exams }}</span></td>
                         <td><span class="badge bg-info">{{ subject.points }}</span></td>
                         <td class="text-end pe-4">
-                            <a href="/subjects/edit/{{ subject.id }}" class="btn btn-sm btn-outline-primary me-2" 
-                               title="Bearbeiten">
+                            <a href="/subjects/edit/{{ subject.id }}" class="btn btn-sm btn-outline-primary me-2"
+                                title="Bearbeiten">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="/subjects/delete/{{ subject.id }}" class="btn btn-sm btn-outline-danger" 
-                               onclick="return confirm('Sind Sie sicher?')" title="Löschen">
+                            <a href="/subjects/delete/{{ subject.id }}" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Sind Sie sicher?')" title="Löschen">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>
