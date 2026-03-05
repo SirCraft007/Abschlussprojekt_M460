@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Prüfung bearbeiten{% endblock title %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <h2 class="fw-bold">
+                        <i class="bi bi-file-earmark-plus text-primary me-2"></i>Prüfung bearbeiten
+                    </h2>
+                    <p class="text-muted mb-0">Geben Sie die Details der Prüfung ein</p>
+                </div>
+                
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {{ error }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+                
+                <form action="{{url}}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    
+                    <div class="mb-3">
+                        <label for="date" class="form-label fw-semibold">
+                            <i class="bi bi-calendar-event me-1"></i>Datum
+                        </label>
+                        <input type="date" class="form-control form-control-lg" id="date" name="date" 
+                               value="{{ date or '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-semibold">
+                            <i class="bi bi-tag me-1"></i>Name
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                               value="{{ name or '' }}" required placeholder="z.B. Zwischenprüfung">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="details" class="form-label fw-semibold">
+                            <i class="bi bi-info-circle me-1"></i>Details
+                            <small class="text-muted">(optional)</small>
+                        </label>
+                        <input type="text" class="form-control" id="details" name="details" 
+                               value="{{ details or '' }}" placeholder="Zusätzliche Informationen">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="grade" class="form-label fw-semibold">
+                                <i class="bi bi-star me-1"></i>Note
+                            </label>
+                            <input type="number" class="form-control form-control-lg" id="grade" name="grade" 
+                                   value="{{ grade or '' }}" required step="0.1" placeholder="z.B. 5.5">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="weight" class="form-label fw-semibold">
+                                <i class="bi bi-asterisk me-1"></i>Gewichtung
+                            </label>
+                            <input type="number" class="form-control form-control-lg" id="weight" name="weight" 
+                                   value="{{ weight or '' }}" required step="0.1" placeholder="z.B. 1">
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Speichern
+                        </button>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-2"></i>Abbrechen
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

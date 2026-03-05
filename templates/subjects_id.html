@@ -1,55 +1,131 @@
 {% extends "base.html" %}
 {% block title %}{{ subject.name }}{% endblock title %}
 {% block content %}
-<h1>{{ subject.name }}</h1>
-
-<div>
-    <h3>Fachdetails</h3>
-    <table>
-        <tr>
-            <th>Bezeichnung</th>
-            <td>{{ subject.name }}</td>
-        </tr>
-        <tr>
-            <th>Durchschnitt</th>
-            <td>{{ subject.average }}</td>
-        </tr>
-        <tr>
-            <th>Anzahl Prüfungen</th>
-            <td>{{ subject.num_exams }}</td>
-        </tr>
-        <tr>
-            <th>Pluspunkte</th>
-            <td>{{ subject.plus_points }}</td>
-        </tr>
-    </table>
+<div class="mb-4">
+    <a href="{{ url_for('subjects') }}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left me-1"></i>Zurück zu Fächern
+    </a>
 </div>
 
-<h2>Prüfungen</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Datum</th>
-            <th>Details</th>
-            <th>Note</th>
-            <th>Gewichtung</th>
-            <th>ID</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for exam in exams %}
-        <tr>
-            <td>{{ exam.date }}</td>
-            <td>{{ exam.details }}</td>
-            <td>{{ exam.grade }}</td>
-            <td>{{ exam.weight }}</td>
-            <td>{{ exam.id }}</td>
-            <td style="display:none;">
-                <input type="hidden" value="{{ exam.id }}">
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <h1 class="fw-bold mb-3">
+            <i class="bi bi-folder2-open text-primary me-2"></i>{{ subject.name }}
+        </h1>
+    </div>
+    <div class="col-lg-4 text-lg-end">
+        <a href="/subjects/{{ subject.id }}/add" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Prüfung hinzufügen
+        </a>
+    </div>
+</div>
 
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-graph-up text-success" style="font-size: 2rem;"></i>
+                <h4 class="fw-bold mt-3 mb-2">{{ subject.average }}</h4>
+                <p class="text-muted mb-0 small">Durchschnitt</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-asterisk text-secondary" style="font-size: 2rem;"></i>
+                <h4 class="fw-bold mt-3 mb-2">{{ subject.weight }}</h4>
+                <p class="text-muted mb-0 small">Gewichtung</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-file-earmark-text text-primary" style="font-size: 2rem;"></i>
+                <h4 class="fw-bold mt-3 mb-2">{{ subject.num_exams }}</h4>
+                <p class="text-muted mb-0 small">Anzahl Prüfungen</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-trophy text-warning" style="font-size: 2rem;"></i>
+                <h4 class="fw-bold mt-3 mb-2">{{ subject.plus_points }}</h4>
+                <p class="text-muted mb-0 small">Pluspunkte</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3">
+        <h3 class="mb-0 fw-bold">
+            <i class="bi bi-list-check me-2"></i>Prüfungen
+        </h3>
+    </div>
+    <div class="card-body p-0">
+        {% if exams %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4"><i class="bi bi-calendar me-2"></i>Datum</th>
+                        <th><i class="bi bi-tag me-2"></i>Name</th>
+                        <th><i class="bi bi-info-circle me-2"></i>Details</th>
+                        <th><i class="bi bi-star me-2"></i>Note</th>
+                        <th><i class="bi bi-asterisk me-2"></i>Gewichtung</th>
+                        <th class="text-end pe-4">Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exam in exams %}
+                    <tr>
+                        <td class="ps-4">
+                            <span class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>{{ exam.date }}
+                            </span>
+                        </td>
+                        <td><span class="fw-semibold">{{ exam.name }}</span></td>
+                        <td><span class="text-muted">{{ exam.details or '—' }}</span></td>
+                        <td>
+                            {% if exam.grade is not none %}
+                            <span class="badge bg-{{ 'success' if exam.grade >= 5 else 'warning' if exam.grade >= 4 else 'danger' }} fs-6">
+                                {{ exam.grade }}
+                            </span>
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-secondary">{{ exam.weight }}</span></td>
+                        <td class="text-end pe-4">
+                            <a href="/grades/{{ subject.id }}/edit/{{ exam.id }}" 
+                               class="btn btn-sm btn-outline-primary me-2" title="Bearbeiten">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="/grades/{{ subject.id }}/delete/{{ exam.id }}" 
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Bist du sicher das du die Prüfung löschen willst?')" 
+                               title="Löschen">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3 mb-0">Noch keine Prüfungen vorhanden</p>
+            <p class="text-muted">Fügen Sie Ihre erste Prüfung hinzu</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock content %}

@@ -1,15 +1,63 @@
 {% extends "base.html" %}
 {% block title %}Übersicht{% endblock title %}
 {% block content %}
-<h1>Hallo {{ username }}!</h1>
-
-
-<p>Du bist als {{ username }} angemeldet.</p>
-
-<p>Gesamtdurchschnitt: {{ total_avrage }}</p>
-<p>Anzahl Prüfungen: {{ total_exams }}</p>
-<p>Gesamtpunkte: {{ total_points }}</p>
-<a href="{{ url_for('delete') }}"
-    onclick="return confirm('Bist du sicher das du deinen Account löschen willst?')">Account löschen</a>
-
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h1 class="fw-bold mb-3">
+                    <i class="bi bi-person-circle text-primary me-2"></i>Hallo {{ username }}!
+                </h1>
+                <p class="text-muted mb-0">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>Du bist als <strong>{{ username }}</strong> angemeldet.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-graph-up-arrow text-success" style="font-size: 2.5rem;"></i>
+                        <h3 class="fw-bold mt-3 mb-2">{{ total_avrage }}</h3>
+                        <p class="text-muted mb-0">Gesamtdurchschnitt</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-file-earmark-text text-primary" style="font-size: 2.5rem;"></i>
+                        <h3 class="fw-bold mt-3 mb-2">{{ total_exams }}</h3>
+                        <p class="text-muted mb-0">Anzahl Prüfungen</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-star-fill text-warning" style="font-size: 2.5rem;"></i>
+                        <h3 class="fw-bold mt-3 mb-2">{{ total_points }}</h3>
+                        <p class="text-muted mb-0">Gesamtpunkte</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-gear me-2"></i>Kontoeinstellungen
+                </h5>
+                <p class="text-muted mb-3">Vorsicht: Diese Aktion kann nicht rückgängig gemacht werden.</p>
+                <a href="{{ url_for('delete') }}" class="btn btn-outline-danger" 
+                   onclick="return confirm('Bist du sicher das du deinen Account löschen willst?')">
+                    <i class="bi bi-trash me-2"></i>Account löschen
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

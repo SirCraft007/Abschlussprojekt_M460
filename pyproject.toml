@@ -5,6 +5,7 @@ requires-python = ">=3.10"
 dependencies = [
   "dotenv>=0.9.9",
   "flask>=3.1",
+  "flask-wtf>=1.2.2",
   "libsql-client>=0.3.1",
   "requests>=2.32.5",
 ]

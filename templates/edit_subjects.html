@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Fach bearbeiten{% endblock title %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="mb-4">
+            <h1 class="fw-bold">
+                <i class="bi bi-pencil-square text-primary me-2"></i>Fach bearbeiten
+            </h1>
+            <p class="text-muted">Bearbeiten Sie die Details Ihrer Fächer</p>
+        </div>
+        
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4"><i class="bi bi-bookmark me-2"></i>Name</th>
+                                <th><i class="bi bi-asterisk me-2"></i>Gewichtung</th>
+                                <th><i class="bi bi-graph-up me-2"></i>Durchschnitt</th>
+                                <th><i class="bi bi-file-earmark-text me-2"></i>Prüfungen</th>
+                                <th><i class="bi bi-star me-2"></i>Punkte</th>
+                                <th class="pe-4"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject in subjects %}
+                            <tr>
+                                {% if subject.id == subject_id %}
+                                <form action="/subjects/edit/{{ subject.id }}" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                    <td class="ps-4">
+                                        <input type="text" class="form-control" required name="name" 
+                                               value="{{ subject.name }}" placeholder="Fachname">
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control" step="0.01" name="weight" 
+                                               value="{{ subject.weight or '' }}" placeholder="Gewichtung">
+                                    </td>
+                                    <td><span class="text-muted">—</span></td>
+                                    <td><span class="text-muted">—</span></td>
+                                    <td><span class="text-muted">—</span></td>
+                                    <td class="pe-4">
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-check-circle me-1"></i>Speichern
+                                        </button>
+                                    </td>
+                                </form>
+                                {% else %}
+                                <td class="ps-4">
+                                    <span class="fw-semibold"><i class="bi bi-folder2 me-2"></i>{{ subject.name }}</span>
+                                </td>
+                                <td><span class="badge bg-secondary">{{ subject.weight }}</span></td>
+                                <td>
+                                    {% if subject.average is not none %}
+                                    <span class="badge bg-{{ 'success' if subject.average >= 5 else 'warning' if subject.average >= 4 else 'danger' }} fs-6">
+                                        {{ subject.average }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td><span class="text-muted">{{ subject.num_exams }}</span></td>
+                                <td><span class="badge bg-info">{{ subject.points }}</span></td>
+                                <td class="pe-4"></td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <a href="{{ url_for('subjects') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Zurück zu Fächern
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
