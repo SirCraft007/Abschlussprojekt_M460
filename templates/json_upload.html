@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}JSON hochladen{% endblock title %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <h1 class="fw-bold">
+                <i class="bi bi-cloud-upload text-primary me-2"></i>Noten importieren
+            </h1>
+            <p class="text-muted">Laden Sie eine JSON-Datei mit Ihren Noten hoch</p>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <strong>Fehler!</strong> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+
+                {% if success %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>Erfolgreich!</strong> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+
+                <form action="{{ url_for('json_upload') }}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                    <div class="mb-4">
+                        <label for="fileInput" class="form-label fw-bold">
+                            <i class="bi bi-file-earmark-json me-2"></i>JSON-Datei auswählen
+                        </label>
+                        <input class="form-control form-control-lg" type="file" id="fileInput" name="file"
+                            accept=".json" required>
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle me-1"></i>Bitte wählen Sie eine JSON-Datei mit Ihren Noten
+                        </small>
+                    </div>
+
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        <strong>Tipp:</strong> Das Exportskript für Ihre Noten finden Sie unter
+                        <a href="https://grades.sercraft.ch" target="_blank" class="alert-link">
+                            grades.sercraft.ch
+                            <i class="bi bi-box-arrow-up-right ms-1"></i>
+                        </a>
+                    </div>
+
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-hourglass-split me-2"></i>
+                        <strong>Hinweis:</strong> Der JSON-Upload und Import kann je nach Dateigrösse etwas dauern.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-upload me-2"></i>Hochladen
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

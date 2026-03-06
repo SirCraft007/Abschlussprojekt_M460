@@ -14,7 +14,7 @@ csrf = CSRFProtect(app)
 
 dev_url = False
 api_url = "http://127.0.0.1:5001" if dev_url else "https://api.sercraft.ch"
-dev = True
+dev = False
 app.config["SESSION_COOKIE_SECURE"] = not dev
 app.config["SESSION_COOKIE_HTTPONLY"] = not dev
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
@@ -105,9 +105,7 @@ def require_login(f):
 def index():
     token = session.get("access_token")
     if token is not None:
-        print("Logged in")
         response, is_valid = make_authenticated_request("GET", "/user")
-        print(response.json())
         if is_valid and response:
             response_json = response.json()
             username = response_json["user"]["username"]
@@ -505,10 +503,8 @@ def login():
                 json={"username": username, "password": password},
             )
             response_json = response.json()
-            print(response_json)
             if response_json["success"] is True:
                 session["access_token"] = response_json["token"]
-                print("Login successful")
                 return redirect(url_for("index"))
             else:
                 error_message = response_json["message"]
@@ -530,7 +526,6 @@ def login():
                 error=True,
             )
         except Exception as e:
-            print(type(e))
             print(e)
             return render_template(
                 "login.html",
@@ -567,7 +562,7 @@ def register():
                 json={"username": username, "password": password},
             )
             response_json = response.json()
-            print(response_json)
+            error_message = response_json["message"]
             if response_json["success"]:
                 session["access_token"] = response_json["token"]
                 return redirect(url_for("index"))
@@ -575,17 +570,16 @@ def register():
                 return render_template(
                     "register.html",
                     error=True,
-                    message=response_json["message"],
+                    message=error_message,
                     username=username,
                     password=password,
                 )
 
-        except Exception as e:
-            print(e)
+        except Exception:
             return render_template(
                 "register.html",
                 error=True,
-                message=e,
+                message="Unbekannter Fehler.",
                 username=username,
                 password=password,
             )
@@ -660,7 +654,6 @@ def update_password():
             )
             if is_valid and response:
                 response_json = response.json()
-                print(response_json["token"])
                 response_json["token"] = session["access_token"]
                 return redirect(url_for("user"))
             else:
@@ -681,6 +674,181 @@ def delete():
         session.clear()
         return redirect(url_for("login"))
     return redirect(url_for("index"))
+
+
+@app.route("/json_upload", methods=["GET", "POST"])
+@require_login
+def json_upload():
+    if request.method == "POST":
+        file = request.files.get("file")
+        if not file or not file.filename or not file.filename.endswith(".json"):
+            return render_template(
+                "json_upload.html",
+                error=True,
+                message="Bitte wählen Sie eine JSON-Datei aus.",
+            )
+
+        # Parse JSON file
+        try:
+            content = file.read()
+            data = json.loads(content.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            return render_template(
+                "json_upload.html",
+                error=True,
+                message="Die Datei ist kein gültiges JSON.",
+            )
+
+        courses = data.get("courses")
+        if not isinstance(courses, list):
+            return render_template(
+                "json_upload.html",
+                error=True,
+                message="Ungültiges Format: 'courses' fehlt oder ist kein Array.",
+            )
+
+        # Load existing subjects once and map by normalized name
+        existing_subjects_response, subjects_valid = make_authenticated_request(
+            "GET", "/subjects"
+        )
+        existing_subjects = {}
+        if subjects_valid and existing_subjects_response:
+            for subject in existing_subjects_response.json().get("subjects", []):
+                subject_name = (subject.get("name") or "").strip()
+                if subject_name:
+                    existing_subjects[subject_name.lower()] = subject
+
+        created_subjects = 0
+        imported_grades = 0
+        skipped_grades = 0
+        errors = []
+
+        for course in courses:
+            subject_name = (course.get("name") or "").strip()
+            if not subject_name:
+                # Skip empty/invalid subject rows from exports
+                continue
+
+            # Ensure subject exists
+            subject_obj = existing_subjects.get(subject_name.lower())
+            if subject_obj is None:
+                weight = course.get("weight", 1)
+                try:
+                    weight = float(weight)
+                except (TypeError, ValueError):
+                    weight = 1
+
+                create_subject_response, create_subject_valid = (
+                    make_authenticated_request(
+                        "POST",
+                        "/subjects",
+                        json={"name": subject_name, "weight": weight},
+                    )
+                )
+                if not create_subject_valid or not create_subject_response:
+                    errors.append(
+                        f"Fach '{subject_name}' konnte nicht erstellt werden."
+                    )
+                    continue
+
+                created_id = create_subject_response.json().get("id")
+                if not created_id:
+                    errors.append(
+                        f"Fach '{subject_name}' wurde erstellt, aber ohne ID."
+                    )
+                    continue
+
+                subject_obj = {"id": created_id, "name": subject_name}
+                existing_subjects[subject_name.lower()] = subject_obj
+                created_subjects += 1
+
+            subject_id = subject_obj.get("id")
+            if not subject_id:
+                errors.append(f"Ungültige Fach-ID für '{subject_name}'.")
+                continue
+
+            assessments = course.get("assessments") or []
+            if not isinstance(assessments, list):
+                continue
+
+            for assessment in assessments:
+                raw_grade = assessment.get("grade")
+                if raw_grade is None or raw_grade == "":
+                    skipped_grades += 1
+                    continue
+
+                try:
+                    grade_value = float(raw_grade)
+                except (TypeError, ValueError):
+                    skipped_grades += 1
+                    continue
+
+                raw_weight = assessment.get("weight", 1)
+                try:
+                    weight_value = float(raw_weight)
+                except (TypeError, ValueError):
+                    weight_value = 1
+
+                raw_date = (assessment.get("date") or "").strip()
+                date_value = raw_date
+                if raw_date:
+                    for fmt in ("%d.%m.%Y", "%Y-%m-%d"):
+                        try:
+                            date_value = datetime.strptime(raw_date, fmt).strftime(
+                                "%Y-%m-%d"
+                            )
+                            break
+                        except ValueError:
+                            continue
+
+                topic = (assessment.get("topic") or "Ohne Titel").strip()
+                course_code = (course.get("code") or "").strip()
+                details = (
+                    f"Importiert aus JSON{f' ({course_code})' if course_code else ''}"
+                )
+
+                payload = {
+                    "subject_id": subject_id,
+                    "date": date_value,
+                    "name": topic,
+                    "grade": grade_value,
+                    "details": details,
+                    "weight": weight_value,
+                }
+
+                create_grade_response, create_grade_valid = make_authenticated_request(
+                    "POST", "/grades", json=payload
+                )
+
+                if create_grade_valid and create_grade_response:
+                    imported_grades += 1
+                else:
+                    errors.append(
+                        f"Note '{topic}' in '{subject_name}' konnte nicht importiert werden."
+                    )
+
+        if imported_grades == 0 and errors:
+            return render_template(
+                "json_upload.html",
+                error=True,
+                message="Import fehlgeschlagen. " + errors[0],
+            )
+
+        summary = (
+            f"Import abgeschlossen: {imported_grades} Noten importiert, "
+            f"{created_subjects} Fächer erstellt, {skipped_grades} Noten übersprungen."
+        )
+        if errors:
+            summary += f" Zusätzlich traten {len(errors)} Fehler auf."
+
+        return render_template(
+            "json_upload.html",
+            error=False,
+            success=True,
+            message=summary,
+        )
+
+    return render_template("json_upload.html")
 
 
 if __name__ == "__main__":
