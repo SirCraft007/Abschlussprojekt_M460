@@ -13,7 +13,7 @@ app = Flask(__name__)
 csrf = CSRFProtect(app)
 
 dev_url = False
-api_url = "http://127.0.0.1:5000" if dev_url else "https://api.sercraft.ch"
+api_url = "http://127.0.0.1:5001" if dev_url else "https://api.sercraft.ch"
 dev = True
 app.config["SESSION_COOKIE_SECURE"] = not dev
 app.config["SESSION_COOKIE_HTTPONLY"] = not dev
@@ -105,7 +105,9 @@ def require_login(f):
 def index():
     token = session.get("access_token")
     if token is not None:
+        print("Logged in")
         response, is_valid = make_authenticated_request("GET", "/user")
+        print(response.json())
         if is_valid and response:
             response_json = response.json()
             username = response_json["user"]["username"]
@@ -121,6 +123,7 @@ def index():
                 total_points=total_points,
             )
         else:
+            session.clear()
             return redirect(url_for("login"))
     else:
         return render_template("index.html")
@@ -258,6 +261,7 @@ def subject(subject_id):
         "weight": subject["weight"],
     }
     return render_template("subjects_id.html", subject=subject_data, exams=exams)
+
 
 @app.route("/subjects/<int:subject_id>/add", methods=["GET", "POST"])
 @require_login
@@ -501,8 +505,10 @@ def login():
                 json={"username": username, "password": password},
             )
             response_json = response.json()
-            if response_json["success"]:
+            print(response_json)
+            if response_json["success"] is True:
                 session["access_token"] = response_json["token"]
+                print("Login successful")
                 return redirect(url_for("index"))
             else:
                 error_message = response_json["message"]
@@ -538,6 +544,7 @@ def login():
             "login.html",
             error=False,
         )
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -590,6 +597,82 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+
+@app.route("/user", methods=["GET"])
+@require_login
+def user():
+    response, is_valid = make_authenticated_request("GET", "/user")
+    if is_valid and response:
+        response_json = response.json()
+        username = response_json["user"]["username"]
+        total_average = response_json["user"]["total_average"]
+        total_exams = response_json["user"]["total_exams"]
+        total_points = response_json["user"]["total_points"]
+        return render_template(
+            "user.html",
+            username=username,
+            total_avrage=total_average,
+            total_exams=total_exams,
+            total_points=total_points,
+        )
+    return redirect(url_for("login"))
+
+
+@app.route("/user/update_username", methods=["GET", "POST"])
+@require_login
+def update_username():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form.get("password")
+        if username:
+            payload = {"username": username, "password": password}
+            response, is_valid = make_authenticated_request(
+                "PUT", "/user/update_username", json=payload
+            )
+            if is_valid and response:
+                return redirect(url_for("user"))
+            else:
+                return render_template(
+                    "update_username.html",
+                    error=True,
+                    message=response.json()["message"],
+                    username=username,
+                )
+        else:
+            return render_template(
+                "update_username.html",
+                error=True,
+                message="Bitte geben Sie einen Benutzernamen an.",
+            )
+    return render_template("update_username.html", error=False)
+
+
+@app.route("/user/update_password", methods=["GET", "POST"])
+@require_login
+def update_password():
+    if request.method == "POST":
+        old_password = request.form["old_password"]
+        new_password = request.form.get("new_password")
+        if old_password and new_password:
+            payload = {"old_password": old_password, "new_password": new_password}
+            response, is_valid = make_authenticated_request(
+                "PUT", "/user/update_password", json=payload
+            )
+            if is_valid and response:
+                response_json = response.json()
+                print(response_json["token"])
+                response_json["token"] = session["access_token"]
+                return redirect(url_for("user"))
+            else:
+                return render_template(
+                    "update_password.html",
+                    error=True,
+                    message=response.json()["message"],
+                )
+
+    return render_template("update_password.html", error=False)
+
+
 @app.route("/delete")
 @require_login
 def delete():
@@ -599,9 +682,6 @@ def delete():
         return redirect(url_for("login"))
     return redirect(url_for("index"))
 
-def hello():
-    return "Hello World!"
-
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Benutzername ändern{% endblock title %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 mx-auto">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h1 class="fw-bold mb-4">
+                    <i class="bi bi-person-badge text-primary me-2"></i>Benutzername ändern
+                </h1>
+
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>{{ message }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('update_username') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-bold">Neuer Benutzername</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                            placeholder="Neuer Benutzername" value="{{ username if username else '' }}" required
+                            autocomplete="username">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">Aktuelles Passwort</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="Zur Bestätigung" required autocomplete="current-password">
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>Geben Sie Ihr aktuelles Passwort zur Bestätigung ein.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <a href="{{ url_for('user') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Zurück
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Benutzername ändern
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
